@@ -6,22 +6,33 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from editor.build import build_editor
 from configs.config import get_cfg_defaults  # local variable usage pattern, or:
-from comm.mylog import logger
+# from comm.mylog import logger
+
 
 def get_args():
-
+    """
+    对输入参数进行解析
+    :return:
+    """
     parser = argparse.ArgumentParser(description='config for open chat editor')
+    # 从参数中获取配置文件，必须要有
     parser.add_argument('--cfg', type=str, required=True,help='input cfg file path')
     parser.add_argument('--func', type=str,default='Text2VideoEditor',help='editor function name')
     args = parser.parse_args()
+    print("your args: cfg={}, func={}".format(args.cfg,args.func))
     return args
+
+
 if __name__ == "__main__":
     args = get_args()
     cfg_path = args.cfg
+    # 目前只支持：Text2VideoEditor和URL2VideoEditor
     if args.func == "Text2VideoEditor":
-        logger.info('building Text2VideoEditor')
+        # logger.info('building Text2VideoEditor')
+        print('building Text2VideoEditor')
         cfg = get_cfg_defaults()
         # cfg_path = "configs/video_by_retrieval_text_by_chatgpt_zh.yaml"
+        # 将cfg_path中的yaml配置内容合并到cfg中
         cfg.merge_from_file(cfg_path)
         print(cfg)
         editor = build_editor(cfg)
@@ -33,14 +44,14 @@ if __name__ == "__main__":
             gr.Interface(
                 run_Text2VideoEditor_logit,
                 [gr.inputs.Textbox(placeholder="Enter sentence here..."),  gr.Radio(["realism style", "cartoon style"], label="video style", info="Please select a video style"),],
-                outputs =  ['text',gr.Video()],
+                outputs = ['text', gr.Video()],
                 title='Text2VideoEditor',
                 allow_flagging="never",
-                
             ).launch()
         run_Text2VideoEditor_ui()
     elif args.func == "URL2VideoEditor":
-        logger.info('building Text2VideoEditor')
+        # logger.info('building Text2VideoEditor')
+        print('building Text2VideoEditor')
         cfg = get_cfg_defaults()
         # cfg_path = "configs/video_by_retrieval_text_by_chatgpt_zh.yaml"
         cfg.merge_from_file(cfg_path)

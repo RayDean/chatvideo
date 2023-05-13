@@ -3,6 +3,7 @@ video_editor:
 
   # visual
   visual_gen:
+    # 通过什么方式产生视频，可选："image_by_retrieval","image_by_diffusion","image_by_retrieval_then_diffusion"
     type: image_by_diffusion
     image_by_diffusion:
       model_id: stabilityai/stable-diffusion-2-1

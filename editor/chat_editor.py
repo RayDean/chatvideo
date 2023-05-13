@@ -5,16 +5,17 @@ from moviepy.editor import afx
 from editor.image_effect import zoom_in_effect
 
 
-
 class Text2VideoEditor(object):
-    def __init__(self,
-                 cfg,
-                 text_generator,
-                 vision_generator,
-                 audio_generator,
-                 bgm_generator,
-                
-                 ) -> None:
+
+    def __init__(self,cfg,text_generator,vision_generator,audio_generator,bgm_generator) -> None:
+        """
+        由文本到视频的编辑器
+        :param cfg: 来源于yaml的配置内容
+        :param text_generator: 文本产生器
+        :param vision_generator: 图像视频产生器
+        :param audio_generator: 音频产生器
+        :param bgm_generator: 背景音乐产生器
+        """
         self.text_generator = text_generator
         self.vision_generator = vision_generator
         self.audio_generator = audio_generator
@@ -23,11 +24,21 @@ class Text2VideoEditor(object):
         # self.style = style
     
     def run(self,input_text,style="",out_file="test.mp4"):
+        """
+        执行视频合成动作
+        :param input_text: 视频中的所有文本
+        :param style: 视频风格，可选：卡通风格，现实主义风格
+        :param out_file: 最终视频保存的名称
+        :return:
+            final_text: 视频中的所有文本，
+            out_file: 最终视频保存的名称
+        """
         # setence to passage
         logger.info('input_text: {}'.format(input_text))
         text_resp = self.text_generator.run(input_text)
         text_lang = text_resp['lang']
         if text_lang == 'zh':
+            # 将文本产生器得到的结果转变为中文
             zh_out_text = [val['zh'] for val in text_resp['out_text']]
             logger.info('zh_out_text: {}'.format(zh_out_text))
 
@@ -39,6 +50,7 @@ class Text2VideoEditor(object):
         
         # text 2 voice
         if text_lang == 'zh':
+            # 设置语音是中文还是英文
             tts_in_text = zh_out_text
             sub_title_text = zh_out_text
             final_text = zh_out_text
@@ -46,17 +58,17 @@ class Text2VideoEditor(object):
             tts_in_text = en_out_text
             sub_title_text = en_out_text
             final_text = en_out_text
-            
+
+        # 使用音频产生器得到音频
         tts_resp = self.audio_generator.batch_run(tts_in_text)
-    
-    
-        # text 2 vision
+
+        # 图像视频产生器得到图像视频
         vision_resp = self.vision_generator.batch_run(out_text_stylized)
         
         # merge media 
         final_clips = []
         
-        for idx,(tts_info,vision_info,one_text) in enumerate(zip(tts_resp, vision_resp,sub_title_text)):
+        for idx,(tts_info, vision_info, one_text) in enumerate(zip(tts_resp, vision_resp, sub_title_text)):
             audio_file= tts_info['audio_path']
             # load audio
             audio_clip = AudioFileClip(audio_file)
@@ -96,19 +108,18 @@ class Text2VideoEditor(object):
         video = concatenate_videoclips(final_clips)
         
         video_audio = video.audio.volumex(1.0)
-        # add bgm 
+        # 由背景音乐产生器得到背景音乐
         bgm_resp = self.bgm_generator.run()
         local_bgm = bgm_resp['bgm_local_file']
         bgm_clip = AudioFileClip(local_bgm).volumex(0.2)
         bgm_clip = afx.audio_loop(bgm_clip,duration=video.duration)
-        
+        # 将视频和背景音乐组合起来
         video_audio = CompositeAudioClip([video_audio,bgm_clip])
         
         # add audio and bgm 
         video = video.set_audio(video_audio)
-        
+        # 将最终视频保存到文件中，设置fps为24
         video.write_videofile(out_file, fps=24)
-        
         return final_text, out_file
 
 

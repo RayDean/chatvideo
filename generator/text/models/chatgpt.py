@@ -7,27 +7,45 @@ from comm.url_parser import get_paragraph_texts
 
 # openai.organization = os.getenv("OPENAI_ORG_ID")
 # openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
 def is_all_chinese(strs):
     for _char in strs:
         if not '\u4e00' <= _char <= '\u9fa5':
             return False
     return True
 
+
 def is_contains_chinese(strs):
     for _char in strs:
         if '\u4e00' <= _char <= '\u9fa5':
             return True
     return False
+
+
 class ChatGPTModel(object):
+
     def __init__(self,cfg,
                  organization,
                  api_key,
                  ) -> None:
+        """
+        根据chatgpt的组织和key构建一个ChatGPT的连接
+        :param cfg:
+        :param organization:
+        :param api_key:
+        """
         self.cfg = cfg
         openai.organization = organization
         openai.api_key = api_key
         # ch_prompt = ''
+
     def run(self, input_text):
+        """
+
+        :param input_text:
+        :return:
+        """
         contain_ch = False
         if is_contains_chinese(input_text):
             prompt = "请以{}为内容，生成100字的短视频文案".format(input_text)
@@ -72,7 +90,6 @@ class ChatGPTModel(object):
         resp["out_text"] = out_info
         return resp
             
-    
     def _translate(self,text):
         prompt = "将以下句子翻译成英文:\n\n" + text +'\n\n1'
         response = openai.Completion.create(
@@ -83,9 +100,7 @@ class ChatGPTModel(object):
         echo=False,)
         out_text = response.choices[0].text
         logger.info('_translate out_text: {}'.format(out_text))
-
         out_text = out_text.replace('\n','').replace('. ','')
-        
         return out_text
 
 
@@ -118,10 +133,9 @@ class URL2TextChatGPTModel(object):
         echo=False,)
         out_text = response.choices[0].text
         logger.info('_translate out_text: {}'.format(out_text))
-
         out_text = out_text.replace('\n','').replace('. ','')
-        
         return out_text
+
     def run(self, url):
         texts = get_paragraph_texts(url)
         logger.info('url out texts: {}'.format(texts))
@@ -163,13 +177,3 @@ class URL2TextChatGPTModel(object):
         resp['lang'] = 'zh'
         resp["out_text"] = out_info
         return resp
-               
- 
-        
-    
-    
-    
-        
-            
-        
-    
