@@ -6,15 +6,22 @@ from generator.tts.build import TTSGenerator
 from configs.config import get_cfg_defaults  # local variable usage pattern, or:
 from generator.tts.build import build_tts_generator
 
+
 def test_PaddleSpeechTTS():
+    """
+    测试用Paddle进行tts语音合成
+    :return:
+    """
     cfg = get_cfg_defaults()
-    cfg_path = "configs\multilang_image_by_retrieval.yaml"
+    cfg_path = "configs/text2video/multilang_image_by_retrieval.yaml"
     cfg.merge_from_file(cfg_path)
     print(cfg)
     tts_generator = build_tts_generator(cfg)
     text = ["a cat on the road",'a cat and a kid playing on the road']
     resp = tts_generator.batch_run(text)
     print(resp)
+
+
 if __name__ == "__main__":
     test_PaddleSpeechTTS()
     

@@ -1,12 +1,15 @@
-import numpy as np
-import os
 import faiss
-import logging
+
 
 class FiassKnnServer(object):
+
     def __init__(self,
                  index_path,
                  ):
+        """
+
+        :param index_path:
+        """
         # loading faiss index
         # self.top_k = 10
         self.nprobe = 1024 

@@ -22,6 +22,8 @@ def get_args():
     print("your args: cfg={}, func={}".format(args.cfg,args.func))
     return args
 
+# TODO：由于paddlespeech引入librosa包，该包引入numpy1.20,导致报错，故而无法使用文本转语音功能
+
 
 if __name__ == "__main__":
     args = get_args()

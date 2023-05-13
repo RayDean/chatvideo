@@ -8,8 +8,9 @@ import traceback
 import os
 from PIL import Image
 from typing import List
-# logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 from comm.mylog import logger
+
+
 def download_image(url):
     urllib_request = urllib.request.Request(
         url,
@@ -19,7 +20,6 @@ def download_image(url):
     with urllib.request.urlopen(urllib_request, timeout=10) as r:
         img_stream = io.BytesIO(r.read())
     return img_stream
-
 
 
 class ImageGenbyRetrieval(MediaGeneratorBase):
@@ -85,14 +85,9 @@ class ImageGenbyRetrieval(MediaGeneratorBase):
                     logger.error(traceback.format_exc())
                     
                     continue
-        
-                
-    
         return resp
     
-    
-        
-        
+
 class ImageGenByDiffusion(MediaGeneratorBase):
     '''
     generate image by stable diffusion
@@ -121,12 +116,6 @@ class ImageGenByDiffusion(MediaGeneratorBase):
             resp.append(one_info)
         return resp
     
-            
-        
-    
-    
-    
-
 
 class ImageGenByRetrievalThenDiffusion(MediaGeneratorBase):
     '''
@@ -157,4 +146,3 @@ class ImageGenByRetrievalThenDiffusion(MediaGeneratorBase):
             # save back 
             img.save(local_img_path)
         return retrieval_resp_list
-    

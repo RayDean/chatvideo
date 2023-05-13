@@ -42,9 +42,9 @@ class ChatGPTModel(object):
 
     def run(self, input_text):
         """
-
+        以input_text为文本，使用chatgpt来生成一段文案
         :param input_text:
-        :return:
+        :return: 返回该文案内容
         """
         contain_ch = False
         if is_contains_chinese(input_text):
@@ -54,11 +54,11 @@ class ChatGPTModel(object):
             prompt = "Please use {} as the content to generate a 50-word short video copy".format(input_text)
         
         response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=400,
-        stream=False,
-        echo=False,)
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=400,
+            stream=False,
+            echo=False,)
         text = response.choices[0].text
         logger.info("chatgpt response: {}".format(text))
         text = text.replace('\n','')

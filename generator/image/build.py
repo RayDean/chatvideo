@@ -7,26 +7,27 @@ from generator.image.generation.build import build_img_gen_model,build_img2img_g
 from comm.mylog import logger
 # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+
 def build_image_generator(cfg):
-    '''
-    所有的build的入参都是cfg对象
-    '''
+    """
+    依据cfg配置来调用不同的图像产生器
+    :param cfg:
+    :return:
+    """
     image_generator = None
+    # 图像产生器的类型
     visual_gen_type = cfg.video_editor.visual_gen.type
     logger.info('visual_gen_type: {}'.format(visual_gen_type))
+    # 下面依据不同配置得到不同的图像产生器
     if visual_gen_type == "image_by_retrieval":
         logger.info('start build_QueryTextEmbedServer')
         query_model = build_QueryTextEmbedServer(cfg)
-        
-        # build faiss index 
+        # build faiss index
         logger.info('start build_FiassKnnServer')
         index_server = build_FiassKnnServer(cfg)
-
-        # build meta server 
+        # build meta server
         logger.info('start build_ImgMetaServer')    
-        
         meta_server = ImgMetaServer(cfg.video_editor.visual_gen.image_by_retrieval.meta_path)
-    
         image_generator = ImageGenbyRetrieval(cfg,query_model,index_server,meta_server)
     elif visual_gen_type == "image_by_diffusion":
         logger.info("start build_img_gen_model")
@@ -36,16 +37,12 @@ def build_image_generator(cfg):
         # build img retrieval generator
         logger.info('start build_QueryTextEmbedServer')
         query_model = build_QueryTextEmbedServer(cfg)
-        
-        # build faiss index 
+        # build faiss index
         logger.info('start build_FiassKnnServer')
         index_server = build_FiassKnnServer(cfg)
-
-        # build meta server 
+        # build meta server
         logger.info('start build_ImgMetaServer')    
-        
         meta_server = ImgMetaServer(cfg.video_editor.visual_gen.image_by_retrieval.meta_path)
-    
         image_retrieval_generator = ImageGenbyRetrieval(cfg,query_model,index_server,meta_server)
         img2img_model = build_img2img_gen_model(cfg)
         image_generator = ImageGenByRetrievalThenDiffusion(cfg,image_retrieval_generator,img2img_model)

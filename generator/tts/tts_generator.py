@@ -1,14 +1,23 @@
 from generator.comm.media_generator import MediaGeneratorBase
 import os
+
+
 class TTSGenerator(MediaGeneratorBase):
+
     def __init__(self, config,
                  tts_model = None,
                  ) -> None:
+        """
+        语音产生器
+        :param config:
+        :param tts_model:
+        """
         super().__init__(config)
         self.tmp_dir = './tmp/tts'
         self.tts_model = tts_model
         if not os.path.exists(self.tmp_dir):
             os.makedirs(self.tmp_dir)
+
     def run_tts(self,text):
         
         out_path = os.path.join(self.tmp_dir,self.get_str_md5(text)+'.wav')
@@ -26,5 +35,3 @@ class TTSGenerator(MediaGeneratorBase):
         for text in text_list:
             resp.append(self.run_tts(text))
         return resp
-            
-        

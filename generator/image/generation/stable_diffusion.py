@@ -2,6 +2,7 @@
 from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler,StableDiffusionImg2ImgPipeline
 import torch
 from PIL import Image
+
 class StableDiffusionImgModel(object):
     def __init__(self,model_id="stabilityai/stable-diffusion-2-1") -> None:
         self.model_id = model_id

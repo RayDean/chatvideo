@@ -9,6 +9,7 @@ class MetaServerBase(object):
 
 
 class ImgMetaServer(MetaServerBase):
+
     def __init__(self,db_path) -> None:
         
         logging.info('db_path: {}'.format(db_path))
@@ -41,8 +42,4 @@ class VideoMetaServer(MetaServerBase):
     def batch_get_meta(self,ids_list):
         
         urls = [self.db[str(idx)].decode('utf-8') for idx in ids_list]
-        return urls 
-
-        
-        
-    
+        return urls
