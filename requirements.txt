@@ -89,7 +89,7 @@ nara-wpe==0.0.9
 networkx==3.0
 nltk==3.8.1
 numba==0.57.0
-numpy==1.24.1
+numpy==1.24.3
 onnxruntime==1.14.1
 openai==0.27.6
 OpenCC==1.1.1
@@ -171,9 +171,9 @@ timer==0.2.2
 ToJyutping==0.2.3
 tokenizers==0.13.3
 toolz==0.12.0
-torch==2.0.0+cu117
-torchaudio==2.0.1+cu117
-torchvision==0.15.1+cu117
+torch==2.0.1+cu117
+torchaudio==2.0.1=2+cu117
+torchvision==0.15.2+cu117
 tqdm==4.65.0
 transformers==4.28.1
 typeguard==2.13.3
