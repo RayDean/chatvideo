@@ -10,7 +10,13 @@ from typing import List
 # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 from comm.mylog import logger
 
+
 def download_video(url):
+    """
+    从url中下载视频，返回下载的视频流
+    :param url:
+    :return:
+    """
     urllib_request = urllib.request.Request(
         url,
         data=None,
@@ -22,14 +28,19 @@ def download_video(url):
 
 
 class VideoGenByRetrieval(MediaGeneratorBase):
-    '''
-    generate video by retrieval
-    '''
+
     def __init__(self, config,
                  query_embed_server,
                  index_server,
                  meta_server,
                  ):
+        """
+        通过Retrieval方式产生视频
+        :param config:
+        :param query_embed_server:
+        :param index_server:
+        :param meta_server:
+        """
         super(VideoGenByRetrieval, self).__init__(config)
         self.config = config
         self.query_embed_server = query_embed_server
@@ -41,30 +52,37 @@ class VideoGenByRetrieval(MediaGeneratorBase):
             os.makedirs(self.tmp_dir)
 
     def batch_run(self, query:List,**kwargs):
-        '''
-        run video generator by retrieval
-        support multi query
-        '''
+        """
+        批量产生视频
+        从query对应的url中下载视频，并将其保存到本地某个目录中
+        :param query: list, 要产生视频的promt组成的list
+        :param kwargs:
+        :return:
+        """
         assert type(query) == list
-    
         # get query embed
         prompt = 'a picture without text'
         query = [ val + prompt for val in query]
+        # 通过查询服务器来获取query对应的向量
         query_embed = self.query_embed_server.get_query_embed(query)
 
         # knn search, indices: [batch_size, top_k]
+        # 在index_server中搜索提示词词向量对应的索引
         distances, indices = self.index_server.search(query_embed)
 
-        # get meta 
+        # 依据视频索引获取对应视频的meta信息
         resp = []
-        for batch_idx,topk_ids in  enumerate(indices):
+        for batch_idx, topk_ids in enumerate(indices):
             # one_info = {}
             # one query topk urls
+            # 获取topk_ids对应的urls
             urls = self.meta_server.batch_get_meta(topk_ids) 
             # logging.error('urls: {}'.format(urls))
             # download one of the topk videos
+            # 从urls中下载url对应的视频，并保存到某个目录
             for url_id,url in enumerate(urls):
                 try:
+                    #
                     video_stream = download_video(url)
                     # try to open
                     url_md5 = self.get_url_md5(url)
@@ -78,7 +96,5 @@ class VideoGenByRetrieval(MediaGeneratorBase):
                 except Exception as e:
                     logger.error(e)
                     logger.error(traceback.format_exc())
-                    
                     continue
         return resp
-    

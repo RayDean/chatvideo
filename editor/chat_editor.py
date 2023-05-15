@@ -65,15 +65,16 @@ class Text2VideoEditor(object):
         # 图像视频产生器得到图像视频
         vision_resp = self.vision_generator.batch_run(out_text_stylized)
         
-        # merge media 
+        # merge media
+        # 生成的所有中间视频
         final_clips = []
         
         for idx,(tts_info, vision_info, one_text) in enumerate(zip(tts_resp, vision_resp, sub_title_text)):
             audio_file= tts_info['audio_path']
-            # load audio
+            # 从音频文件中加载音频Clip
             audio_clip = AudioFileClip(audio_file)
             
-            # text clip 
+            # 加载字幕Clip
             if self.cfg.video_editor.subtitle.font:
                 text_clip = TextClip(one_text, font=self.cfg.video_editor.subtitle.font,fontsize=30, color='black')
             else:
@@ -82,29 +83,34 @@ class Text2VideoEditor(object):
             text_clip = text_clip.set_duration(audio_clip.duration)
             vision_type = vision_info['data_type']
             if vision_type == 'image':
+                # 如果是图像，则使用图像来组成视频
                 vision_file = vision_info['img_local_path']
                 vision_clip = ImageClip(vision_file)
                 vision_clip = vision_clip.resize((640,360))
                 
                 # set duration
+                # 此处每个图像的持续时间和音频一致
                 vision_clip = vision_clip.set_duration(audio_clip.duration)
+                # 图像具有放大效果
                 vision_clip = zoom_in_effect(vision_clip, zoom_ratio=0.04)
-                
+                # 设置音频
                 vision_clip = vision_clip.set_audio(audio_clip)
             elif vision_type == 'video':
                 vision_file = vision_info['video_local_path']
+                # 组件视频Clip
                 vision_clip = VideoFileClip(vision_file)
                 vision_clip = vision_clip.set_duration(audio_clip.duration)
                 vision_clip = vision_clip.resize((640,360))
                 vision_clip = vision_clip.set_audio(audio_clip)
 
-            # 
             vision_clip = CompositeVideoClip([vision_clip,text_clip.set_position(('center','bottom'))])
             
-            # save for debug 
+            # save for debug
+            # 将生成的中间视频保存到某个文件中
             vision_clip.write_videofile("test_{}.mp4".format(idx), fps=24)
             final_clips.append(vision_clip)
         logger.info('final_clips: {}'.format(len(final_clips)))
+        # 将所有中间视频组合成最终视频
         video = concatenate_videoclips(final_clips)
         
         video_audio = video.audio.volumex(1.0)
@@ -121,7 +127,3 @@ class Text2VideoEditor(object):
         # 将最终视频保存到文件中，设置fps为24
         video.write_videofile(out_file, fps=24)
         return final_text, out_file
-
-
-
-
