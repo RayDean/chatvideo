@@ -11,7 +11,7 @@ class QueryTextEmbedServer(object):
         """
         self.model = model
 
-    def get_query_embed(self,query):
+    def get_query_embed(self, query):
         """
         获取query提示词的词向量
         支持批次查询

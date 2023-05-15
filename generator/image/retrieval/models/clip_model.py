@@ -16,9 +16,9 @@ def build_clip_model(model_name = "Vit-L/14", device="cpu"):
     return model, preprocess, lambda t: clip.tokenize(t, truncate=True)
 
 
-def build_mclip_model(model_name = "M-CLIP/XLM-Roberta-Large-Vit-L-14", device="cpu"):
-    model = MClip(model_name,device)
-    return model,None,model.get_tokenizer
+# def build_mclip_model(model_name = "M-CLIP/XLM-Roberta-Large-Vit-L-14", device="cpu"):
+#     model = MClip(model_name,device)
+#     return model,None,model.get_tokenizer
 
 
 class ClipTextEmbed(object):
@@ -69,7 +69,7 @@ class MClipTextEmbed(object):
 
     def get_text_embed(self,text:list):
         """
-        获取text文本的词向量
+        获取text文本的向量
         :param text:
         :return:
         """
@@ -81,12 +81,27 @@ class MClipTextEmbed(object):
         return embed
 
 
-def test_mclip():
+# def test_mclip():
+#
+#     model = MClip("M-CLIP/XLM-Roberta-Large-Vit-L-14","cpu")
+#     text = ["hello world","你好"]
+#     embed = model.get_text_embed(text)
+#     print(embed.shape)
 
-    model = MClip("M-CLIP/XLM-Roberta-Large-Vit-L-14","cpu")
-    text = ["hello world","你好"]
-    embed = model.get_text_embed(text)
+
+# if __name__ == "__main__":
+#     test_mclip()
+
+if __name__ == '__main__':
+    model_name = 'M-CLIP/XLM-Roberta-Large-Vit-L-14'
+    model=MClipTextEmbed(model_name, "gpu")
+    texts = [
+        'Three blind horses listening to Mozart.',
+        '三个臭皮匠，顶个诸葛亮',
+        '红楼梦是一部什么样的著作了？',
+        '农夫山泉是什么东西'
+    ]
+    embed=model.get_text_embed(texts)
+    print(embed)
+    print("==========================")
     print(embed.shape)
-
-if __name__ == "__main__":
-    test_mclip()

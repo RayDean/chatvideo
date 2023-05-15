@@ -4,6 +4,11 @@ from generator.video.retrieval.server.knn import VideoFiassKnnServer
 
 
 def build_QueryTextVideoEmbedServer(cfg):
+    """
+
+    :param cfg:
+    :return:
+    """
     model_name = cfg.video_editor.visual_gen.video_by_retrieval.model
     device = cfg.video_editor.visual_gen.video_by_retrieval.device
     
