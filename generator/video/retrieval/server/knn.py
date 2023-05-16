@@ -8,7 +8,7 @@ class VideoFiassKnnServer(object):
                  index_path,
                  ):
         """
-
+        视频FiassKNN类
         :param index_path:
         """
         # loading faiss index
@@ -23,14 +23,16 @@ class VideoFiassKnnServer(object):
             logging.info('set nprobe: {}'.format(self.nprobe))
             self.index.nprobe = self.nprobe
 
-        
-    def search(self,query_emebed,top_k=50):
-        '''
-        query_emebed: numpy array
-        '''
+    def search(self, query_emebed, top_k=50):
+        """
+        搜索query_embed对应的top_k个最相似的向量
+        :param query_emebed: np.ndarray
+        :param top_k:
+        :return:
+        """
         query_emebed = query_emebed.astype('float32')
         distances, indices = self.index.search(query_emebed, top_k)
-        return  distances, indices
+        return distances, indices
 
     def batch_search(self,query_list):
         pass

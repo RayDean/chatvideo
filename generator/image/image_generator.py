@@ -42,8 +42,7 @@ class ImageGenbyRetrieval(MediaGeneratorBase):
 
         if not os.path.exists(self.tmp_dir):
             os.makedirs(self.tmp_dir)
-        
-        
+
     def batch_run(self, query:List,**kwargs):
         '''
         run image generator by retrieval
