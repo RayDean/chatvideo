@@ -5,7 +5,7 @@ from generator.video.retrieval.server.knn import VideoFiassKnnServer
 
 def build_QueryTextVideoEmbedServer(cfg):
     """
-
+    构建文本向量模型
     :param cfg:
     :return:
     """
@@ -17,5 +17,10 @@ def build_QueryTextVideoEmbedServer(cfg):
 
 
 def build_VideoFiassKnnServer(cfg):
+    """
+    视频Fiass服务
+    :param cfg:
+    :return:
+    """
     index_path = cfg.video_editor.visual_gen.video_by_retrieval.index_path
     return VideoFiassKnnServer(index_path)

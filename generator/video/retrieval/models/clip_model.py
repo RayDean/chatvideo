@@ -6,13 +6,19 @@ import numpy as np
 
 
 def build_clip_model(model_name = "Vit-L/14", device="cpu"):
+    """
+    构建词向量模型
+    :param model_name:
+    :param device:
+    :return:
+    """
     model, preprocess = clip.load(model_name, device = device)
     return model,preprocess, lambda t: clip.tokenize(t, truncate=True)
 
 
-def build_mclip_model(model_name = "M-CLIP/XLM-Roberta-Large-Vit-L-14", device="cpu"):
-    model = MClip(model_name,device)
-    return model,None,model.get_tokenizer
+# def build_mclip_model(model_name = "M-CLIP/XLM-Roberta-Large-Vit-L-14", device="cpu"):
+#     model = MClip(model_name,device)
+#     return model,None,model.get_tokenizer
 
 
 class ClipTextEmbed(object):
@@ -42,16 +48,24 @@ class ClipTextEmbed(object):
 class MClipTextEmbed(object):
 
     def __init__(self,model_name,device) -> None:
+        """
+        构建MClip的文本向量模型
+        :param model_name:
+        :param device:
+        """
         self.model_name = model_name
         self.device = device
         self.model = pt_multilingual_clip.MultilingualCLIP.from_pretrained(model_name)
         self.model.eval()
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
 
-    def get_text_embed(self,text):
-        '''
-        text：list[str]
-        '''
+    def get_text_embed(self, text: list):
+        """
+        获取文本text的向量
+        text必须是list
+        :param text:
+        :return:
+        """
         assert type(text) == list
         with torch.no_grad():
             embed = self.model.forward(text, self.tokenizer).detach().cpu().numpy()
@@ -60,13 +74,13 @@ class MClipTextEmbed(object):
         return embed
 
 
-def test_mclip():
+# def test_mclip():
+#
+#     model = MClip("M-CLIP/XLM-Roberta-Large-Vit-L-14","cpu")
+#     text = ["hello world","你好"]
+#     embed = model.get_text_embed(text)
+#     print(embed.shape)
 
-    model = MClip("M-CLIP/XLM-Roberta-Large-Vit-L-14","cpu")
-    text = ["hello world","你好"]
-    embed = model.get_text_embed(text)
-    print(embed.shape)
 
-
-if __name__ == "__main__":
-    test_mclip()
+# if __name__ == "__main__":
+    # test_mclip()

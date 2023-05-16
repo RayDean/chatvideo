@@ -3,10 +3,12 @@ from generator.video.video_generator import VideoGenByRetrieval
 from generator.comm.meta_sever import VideoMetaServer
 from comm.mylog import logger
 
+
 def build_video_generator(cfg):
     video_generator = None
     visual_gen_type = cfg.video_editor.visual_gen.type
     logger.info('visual_gen_type: {}'.format(visual_gen_type))
+    # 根据不同的visual_gen_type来采用不同文本向量模型
     if visual_gen_type == "video_by_retrieval":
         logger.info('start build_QueryTextEmbedServer')
         query_model = build_QueryTextVideoEmbedServer(cfg)
